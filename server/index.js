@@ -4,6 +4,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import connectDB from "./database/db.js"
 import userRoutes from "./routes/user.route.js"
+import courseRoutes from "./routes/course.route.js"
 
 dotenv.config({})
 
@@ -23,6 +24,7 @@ const PORT=process.env.PORT || 3000
 
 
 app.use("/api/v1/user",userRoutes)
+app.use("/api/v1/course",courseRoutes)
 
 
 app.listen(PORT,()=>{
