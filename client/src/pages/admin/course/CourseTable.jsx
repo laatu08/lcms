@@ -48,7 +48,7 @@ const CourseTable = () => {
               <TableCell>{course.isPublished ? "Published" : "Draft"}</TableCell>
               <TableCell>{course.courseTitle}</TableCell>
               <TableCell className="text-right">
-                <Button size="sm" variant="ghost">
+                <Button size="sm" variant="ghost" onClick={()=>navigate(`${course._id}`)}>
                   <Edit></Edit>
                 </Button>
               </TableCell>
