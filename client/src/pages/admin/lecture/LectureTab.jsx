@@ -35,7 +35,7 @@ const LectureTab = () => {
   useEffect(()=>{
     if(lecture){
       setLetureTitle(lecture.lectureTitle)
-      // setIsFree(lecture.isPreviewFree)
+      setIsFree(lecture.isPreviewFree)
       setUploadVideoInfo(lecture.videoInfo)
     }
   },[lecture])

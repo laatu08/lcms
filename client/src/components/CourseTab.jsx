@@ -20,7 +20,7 @@ import {
 } from "./ui/select";
 import { Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEditCourseMutation, useGetCourseByIdQuery } from "@/features/api/courseApi";
+import { useEditCourseMutation, useGetCourseByIdQuery, usePublishCourseMutation } from "@/features/api/courseApi";
 import { toast } from "sonner";
 
 const CourseTab = () => {
@@ -39,7 +39,9 @@ const CourseTab = () => {
   const params=useParams()
   const courseId=params.courseId
 
-  const {data:courseByIdData,isLoading:courseByIdLoading}=useGetCourseByIdQuery(courseId,{refetchOnMountOrArgChange:true})
+  const {data:courseByIdData,isLoading:courseByIdLoading, refetch}=useGetCourseByIdQuery(courseId,{refetchOnMountOrArgChange:true})
+
+  const [publishCourse,{}]=usePublishCourseMutation()
 
   const course=courseByIdData?.course
   useEffect(()=>{
@@ -103,6 +105,19 @@ const CourseTab = () => {
     await editCourse({formData, courseId});
   };
 
+  const publishStatusHandler=async(action)=>{
+    try {
+      const response=await publishCourse({courseId,query:action});
+
+      if(response.data){
+        refetch()
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Fail to publish/unpublish course")
+    }
+  }
+
   useEffect(() => {
     if (isSuccess) {
       toast.success(data.message || "course updated successfully");
@@ -129,8 +144,8 @@ const CourseTab = () => {
         </div>
 
         <div className="space-x-2">
-          <Button variant="outline">
-            {isPublished ? "Unpublished" : "Published"}
+          <Button disabled={courseByIdData?.course.lectures.length===0 } onClick={()=>publishStatusHandler(courseByIdData?.course.isPublished ? "false" : "true")} variant="outline">
+            {courseByIdData?.course.isPublished ? "Unpublished" : "Published"}
           </Button>
 
           <Button>Remove Course</Button>
