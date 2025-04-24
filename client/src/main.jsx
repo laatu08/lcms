@@ -1,4 +1,4 @@
-import { Children, StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
@@ -8,19 +8,18 @@ import { Toaster } from "./components/ui/sonner";
 import { useLoadUserQuery } from "./features/api/authApi";
 import LoadingSpinner from "./components/LoadingSpinner";
 
-// const Custom = ({ Children }) => {
-//   const { isLoading } = useLoadUserQuery();
-
-//   return <>{isLoading ? <LoadingSpinner></LoadingSpinner> : <>{Children}</>}</>;
-// };
+const Custom = ({ children }) => {
+  const { isLoading } = useLoadUserQuery();
+  return <>{isLoading ? <LoadingSpinner/> : <>{children}</>}</>;
+};
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={appStore}>
-      {/* <Custom> */}
+      <Custom>
         <App />
-        <Toaster></Toaster>
-      {/* </Custom> */}
+        <Toaster />
+      </Custom>
     </Provider>
   </StrictMode>
 );
