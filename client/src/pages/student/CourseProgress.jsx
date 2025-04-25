@@ -35,7 +35,7 @@ const CourseProgress = () => {
       refetch();
       toast.success(markCompleteData.message);
     }
-    if (inCompletedSuccess) {
+    else if (inCompletedSuccess) {
       refetch();
       toast.success(markInCompleteData.message);
     }
@@ -68,7 +68,6 @@ const CourseProgress = () => {
     setCurrentLecture(lecture);
     handleLectureProgress(lecture._id);
   };
-
 
   const handleCompleteCourse = async () => {
     await completeCourse(courseId);
