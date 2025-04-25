@@ -10,6 +10,7 @@ export const ProtectedRoute = ({children}) => {
 
     return children;
 }
+
 export const AuthenticatedUser = ({children}) => {
     const {isAuthenticated} = useSelector(store=>store.auth);
 
