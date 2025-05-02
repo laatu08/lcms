@@ -1,5 +1,16 @@
-OY5jVqkPRMifsMxK
-partha2002borah
-2:21:26
-4:33:40
-6:41:56
+MONGO_URI=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+PORT=xxxx
+JWT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Cloudinary
+API_KEY=xxxxxxxxxxxxxxxxxxxxxxx
+API_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+CLOUD_NAME=xxxxxxxxxxxxxx
+
+# strip
+STRIPE_PUBLISHABLE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+WEBHOOK_ENDPOINT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+VxcCfoRE2QKZnulV
+stripe listen --forward-to http://localhost:8080/api/v1/purchase/webhook
