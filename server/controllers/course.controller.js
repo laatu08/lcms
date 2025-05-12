@@ -337,45 +337,82 @@ export const getPublishCourse=async(req,res)=>{
 }
 
 
-export const searchCourse=async(req,res)=>{
+export const searchCourse = async (req, res) => {
     try {
-        const {query="",categories=[],sortByPrice=""}=req.query
-
-        // create search query
-        const searchCriteria={
-            isPublished:true,
-            $or:[
-                {courseTitle:{$regex:query,$options:"i"}},
-                {subTitle:{$regex:query,$options:"i"}},
-                {category:{$regex:query,$options:"i"}},
-            ]
-        }
-
-
-        // if categories are selected
-        if(categories.length>0){
-            searchCriteria.category={$in:categories}
-        }
-
-        // define sorting order
-        const sortOptions={}
-
-        if(sortByPrice==="low"){
-            sortOptions.coursePrice=1; // sort by price in ascending order
-        }
-        else if(sortByPrice==="high"){
-            sortOptions.coursePrice=-1;
-        }
-
-
-        let courses=await Course.find(searchCriteria).populate({path:"creator",select:"name photoURL"}).sort(sortOptions)
-
-        return res.status(200).json({
-            success:true,
-            courses:courses||[]
-        })
-
+      const { query = "", categories = "", sortByPrice = "" } = req.query;
+  
+      // create search query
+      const searchCriteria = {
+        isPublished: true,
+        $or: [
+          { courseTitle: { $regex: query, $options: "i" } },
+          { subTitle: { $regex: query, $options: "i" } },
+          { category: { $regex: query, $options: "i" } },
+        ],
+      };
+  
+      // if categories are selected
+      let categoryArray = [];
+      if (typeof categories === "string" && categories.trim() !== "") {
+        categoryArray = categories.split(",").map((cat) => cat.trim());
+      }
+  
+      if (Array.isArray(categories)) {
+        categoryArray = categories;  // (in case array is directly passed)
+      }
+  
+      if (categoryArray.length > 0) {
+        searchCriteria.category = { $in: categoryArray };
+      }
+  
+      // define sorting order
+      const sortOptions = {};
+  
+      if (sortByPrice === "low") {
+        sortOptions.coursePrice = 1; // ascending
+      } else if (sortByPrice === "high") {
+        sortOptions.coursePrice = -1;
+      }
+  
+      const courses = await Course.find(searchCriteria)
+        .populate({ path: "creator", select: "name photoURL" })
+        .sort(sortOptions);
+  
+      return res.status(200).json({
+        success: true,
+        courses: courses || [],
+      });
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+  };
+  
+
+  // course.controller.js
+export const deleteCourse = async (req, res) => {
+    try {
+      const courseId = req.params.courseId;
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+  
+      // Delete course thumbnail if exists
+      if (course.courseThumbnail) {
+        const publicId = course.courseThumbnail.split("/").pop().split(".")[0];
+        await deleteMediaFromCloudinary(publicId);
+      }
+  
+      // Delete all associated lectures (if you're handling lectures as separate docs)
+      await Lecture.deleteMany({ course: courseId });
+  
+      // Finally delete course
+      await Course.findByIdAndDelete(courseId);
+  
+      return res.status(200).json({ message: "Course deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Failed to delete course" });
+    }
+  };
+  

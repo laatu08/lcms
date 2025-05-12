@@ -19,19 +19,24 @@ const CourseDetail = () => {
   const params = useParams();
   const courseId = params.courseId;
   const navigate = useNavigate();
-  const { data, isLoading, isError } = useGetCourseDetailWithStatusQuery(courseId);
+  const { data, isLoading, isError } =
+    useGetCourseDetailWithStatusQuery(courseId);
 
   if (isLoading) return <h1>Loading...</h1>;
   if (isError) return <h>Failed to load course details</h>;
 
   const { course, purchased } = data;
   console.log(purchased);
+  console.log(course);
+
+  const previewLecture = course?.lectures.find((lec) => lec.isPreviewFree);
+  console.log(previewLecture);
 
   const handleContinueCourse = () => {
-    if(purchased){
-      navigate(`/course-progress/${courseId}`)
+    if (purchased) {
+      navigate(`/course-progress/${courseId}`);
     }
-  }
+  };
 
   return (
     <div className="space-y-5">
@@ -40,7 +45,7 @@ const CourseDetail = () => {
           <h1 className="font-bold text-2xl md:text-3xl">
             {course?.courseTitle}
           </h1>
-          <p className="text-base md:text-lg">Course Sub-title</p>
+          <p className="text-base md:text-lg">{course?.subTitle}</p>
           <p>
             Created By{" "}
             <span className="text-[#C0C4FC] underline italic">
@@ -64,7 +69,7 @@ const CourseDetail = () => {
           <Card>
             <CardHeader>
               <CardTitle>Course Content</CardTitle>
-              <CardDescription>4 lectures</CardDescription>
+              <CardDescription>{course?.lectures.length}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {course.lectures.map((lecture, idx) => (
@@ -72,7 +77,7 @@ const CourseDetail = () => {
                   <span>
                     {true ? <PlayCircle size={14} /> : <Lock size={14} />}
                   </span>
-                  <p>{lecture.lectureTitle}</p>
+                  <p>{lecture?.lectureTitle}</p>
                 </div>
               ))}
             </CardContent>
@@ -81,21 +86,35 @@ const CourseDetail = () => {
         <div className="w-full lg:w-1/3">
           <Card>
             <CardContent className="p-4 flex flex-col">
-              <div className="w-full aspect-video mb-4">
-                <ReactPlayer
-                  width="100%"
-                  height={"100%"}
-                  url={course.lectures[0].videoUrl}
-                  controls={true}
-                />
-              </div>
-              <h1>Lecture title</h1>
+              {previewLecture ? (
+                <>
+                  <div className="w-full aspect-video mb-4">
+                    <ReactPlayer
+                      width="100%"
+                      height="100%"
+                      url={previewLecture.videoUrl}
+                      controls={true}
+                    />
+                  </div>
+                  <h1 className="text-sm font-medium mb-2">
+                    Preview: {previewLecture.lectureTitle}
+                  </h1>
+                </>
+              ) : (
+                <p className="text-sm text-gray-500 mb-4 italic">
+                  No preview available for this course.
+                </p>
+              )}
+
               <Separator className="my-2" />
-              <h1 className="text-lg md:text-xl font-semibold">Course Price</h1>
+              <h1 className="text-lg md:text-xl font-semibold">₹ {course?.coursePrice}</h1>
             </CardContent>
+
             <CardFooter className="flex justify-center p-4">
               {purchased ? (
-                <Button onClick={handleContinueCourse} className="w-full">Continue Course</Button>
+                <Button onClick={handleContinueCourse} className="w-full">
+                  Continue Course
+                </Button>
               ) : (
                 <BuyCourseButton courseId={courseId} />
               )}

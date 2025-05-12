@@ -18,25 +18,25 @@ export const courseApi = createApi({
       }),
       invalidatesTags: ["Refetch_Creator_Course"],
     }),
-    getSearchCourse:builder.query({
-      query: ({searchQuery, categories, sortByPrice}) => {
+    getSearchCourse: builder.query({
+      query: ({ searchQuery, categories, sortByPrice }) => {
         // Build qiery string
         let queryString = `/search?query=${encodeURIComponent(searchQuery)}`
 
         // append cateogry 
-        if(categories && categories.length > 0) {
+        if (categories && categories.length > 0) {
           const categoriesString = categories.map(encodeURIComponent).join(",");
-          queryString += `&categories=${categoriesString}`; 
+          queryString += `&categories=${categoriesString}`;
         }
 
         // Append sortByPrice is available
-        if(sortByPrice){
-          queryString += `&sortByPrice=${encodeURIComponent(sortByPrice)}`; 
+        if (sortByPrice) {
+          queryString += `&sortByPrice=${encodeURIComponent(sortByPrice)}`;
         }
 
         return {
-          url:queryString,
-          method:"GET", 
+          url: queryString,
+          method: "GET",
         }
       }
     }),
@@ -113,6 +113,13 @@ export const courseApi = createApi({
         method: "PATCH",
       }),
     }),
+    deleteCourse: builder.mutation({
+      query: (courseId) => ({
+        url: `/delete/${courseId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Refetch_Creator_Course"], // optional if you're caching courses
+    }),
   }),
 });
 export const {
@@ -128,4 +135,5 @@ export const {
   useRemoveLectureMutation,
   useGetLectureByIdQuery,
   usePublishCourseMutation,
+  useDeleteCourseMutation
 } = courseApi;
