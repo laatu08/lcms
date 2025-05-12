@@ -46,7 +46,7 @@ export default Courses;
 
 const CourseSkeleton = () => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden transform hover:-translate-y-1 transition-transform">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl duration-300 overflow-hidden transform hover:-translate-y-1 transition-transform">
       <Skeleton className="w-full h-40 rounded-t-2xl" />
       <div className="px-5 py-4 space-y-4">
         <Skeleton className="h-6 w-3/4 rounded" />
