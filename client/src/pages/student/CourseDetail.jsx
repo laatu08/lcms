@@ -19,18 +19,13 @@ const CourseDetail = () => {
   const params = useParams();
   const courseId = params.courseId;
   const navigate = useNavigate();
-  const { data, isLoading, isError } =
-    useGetCourseDetailWithStatusQuery(courseId);
+  const { data, isLoading, isError } = useGetCourseDetailWithStatusQuery(courseId);
 
-  if (isLoading) return <h1>Loading...</h1>;
-  if (isError) return <h>Failed to load course details</h>;
+  if (isLoading) return <h1 className="text-center text-lg font-medium mt-10">Loading...</h1>;
+  if (isError) return <h1 className="text-center text-lg font-medium mt-10 text-red-500">Failed to load course details</h1>;
 
   const { course, purchased } = data;
-  console.log(purchased);
-  console.log(course);
-
   const previewLecture = course?.lectures.find((lec) => lec.isPreviewFree);
-  console.log(previewLecture);
 
   const handleContinueCourse = () => {
     if (purchased) {
@@ -39,86 +34,100 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="bg-[#2D2F31] text-white">
-        <div className="max-w-7xl mx-auto py-8 px-4 md:px-8 flex flex-col gap-2">
-          <h1 className="font-bold text-2xl md:text-3xl">
-            {course?.courseTitle}
-          </h1>
-          <p className="text-base md:text-lg">{course?.subTitle}</p>
-          <p>
-            Created By{" "}
-            <span className="text-[#C0C4FC] underline italic">
-              {course?.creator.name}
-            </span>
-          </p>
-          <div className="flex items-center gap-2 text-sm">
-            <BadgeInfo size={16} />
-            <p>Last updated {course?.createdAt.split("T")[0]}</p>
+    <div className="space-y-16">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 shadow-inner py-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 px-4 md:px-8">
+          {/* Left Text */}
+          <div className="space-y-4">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{course?.courseTitle}</h1>
+            <p className="text-lg md:text-xl opacity-90">{course?.subTitle}</p>
+            <p className="text-sm">
+              Created by{" "}
+              <span className="text-indigo-300 underline italic hover:text-indigo-400 transition">
+                {course?.creator.name}
+              </span>
+            </p>
+            <div className="flex flex-wrap items-center gap-4 text-sm opacity-80">
+              <div className="flex items-center gap-2">
+                <BadgeInfo size={16} />
+                <p>Last updated: {course?.createdAt.split("T")[0]}</p>
+              </div>
+              <span>•</span>
+              <p>Students: {course?.enrolledStudents.length}</p>
+            </div>
           </div>
-          <p>Students enrolled: {course?.enrolledStudents.length}</p>
+
+          {/* Right Video Preview */}
+          <div className="rounded-lg overflow-hidden shadow-lg">
+            {previewLecture ? (
+              <ReactPlayer width="100%" height="100%" url={previewLecture.videoUrl} controls />
+            ) : (
+              <div className="w-full aspect-video bg-gray-700 flex items-center justify-center text-gray-300 italic text-sm">
+                No preview available
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto my-5 px-4 md:px-8 flex flex-col lg:flex-row justify-between gap-10">
-        <div className="w-full lg:w-1/2 space-y-5">
-          <h1 className="font-bold text-xl md:text-2xl">Description</h1>
-          <p
-            className="text-sm"
-            dangerouslySetInnerHTML={{ __html: course.description }}
-          />
-          <Card>
+
+      {/* Main Content Section */}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col-reverse lg:flex-row gap-12">
+        {/* Left Content */}
+        <div className="w-full lg:w-2/3 space-y-12">
+          {/* About */}
+          <div className="space-y-4">
+            <h2 className="text-2xl md:text-3xl font-bold">What you'll learn</h2>
+            <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: course.description }} />
+          </div>
+
+          {/* Course Content */}
+          <Card className="shadow-lg dark:bg-gray-900">
             <CardHeader>
-              <CardTitle>Course Content</CardTitle>
-              <CardDescription>{course?.lectures.length}</CardDescription>
+              <CardTitle className="text-xl">Course Content</CardTitle>
+              <CardDescription>{course?.lectures.length} lectures</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <Separator className="my-2" />
+            <CardContent className="grid grid-cols-1 gap-4">
               {course.lectures.map((lecture, idx) => (
-                <div key={idx} className="flex items-center gap-3 text-sm">
-                  <span>
-                    {true ? <PlayCircle size={14} /> : <Lock size={14} />}
-                  </span>
-                  <p>{lecture?.lectureTitle}</p>
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 border rounded-lg p-3 hover:bg-muted/50 dark:hover:bg-muted/30 transition"
+                >
+                  {lecture.isPreviewFree ? (
+                    <PlayCircle size={20} className="text-green-500 dark:text-green-400" />
+                  ) : (
+                    <Lock size={20} className="text-gray-400" />
+                  )}
+                  <p className="truncate">{lecture?.lectureTitle}</p>
                 </div>
               ))}
             </CardContent>
           </Card>
         </div>
-        <div className="w-full lg:w-1/3">
-          <Card>
-            <CardContent className="p-4 flex flex-col">
-              {previewLecture ? (
-                <>
-                  <div className="w-full aspect-video mb-4">
-                    <ReactPlayer
-                      width="100%"
-                      height="100%"
-                      url={previewLecture.videoUrl}
-                      controls={true}
-                    />
-                  </div>
-                  <h1 className="text-sm font-medium mb-2">
-                    Preview: {previewLecture.lectureTitle}
-                  </h1>
-                </>
-              ) : (
-                <p className="text-sm text-gray-500 mb-4 italic">
-                  No preview available for this course.
-                </p>
-              )}
 
-              <Separator className="my-2" />
-              <h1 className="text-lg md:text-xl font-semibold">₹ {course?.coursePrice}</h1>
-            </CardContent>
+        {/* Right Buy Card */}
+        <div className="w-full lg:w-1/3 sticky top-24 self-start">
+          <Card className="shadow-xl dark:bg-gray-900">
+            <CardContent className="p-4 space-y-4">
+              <h3 className="text-2xl font-bold text-primary">₹ {course?.coursePrice}</h3>
 
-            <CardFooter className="flex justify-center p-4">
+              <Separator />
+
               {purchased ? (
-                <Button onClick={handleContinueCourse} className="w-full">
+                <Button onClick={handleContinueCourse} className="w-full text-lg py-2 rounded-xl shadow-md hover:scale-105 transition">
                   Continue Course
                 </Button>
               ) : (
-                <BuyCourseButton courseId={courseId} />
+                <BuyCourseButton courseId={courseId} className="w-full text-lg py-2 rounded-xl shadow-md hover:scale-105 transition" />
               )}
-            </CardFooter>
+
+              <ul className="text-sm text-muted-foreground space-y-1 mt-4">
+                <li>✅ Lifetime access</li>
+                <li>✅ Certificate on completion</li>
+                <li>✅ Accessible on mobile & desktop</li>
+              </ul>
+            </CardContent>
           </Card>
         </div>
       </div>

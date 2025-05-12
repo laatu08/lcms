@@ -15,55 +15,36 @@ import { toast } from "sonner";
 const CourseProgress = () => {
   const params = useParams();
   const courseId = params.courseId;
-  const { data, isLoading, isError, refetch } =
-    useGetCourseProgressQuery(courseId);
+  const { data, isLoading, isError, refetch } = useGetCourseProgressQuery(courseId);
 
   const [updateLectureProgress] = useUpdateLectureProgressMutation();
-  const [
-    completeCourse,
-    { data: markCompleteData, isSuccess: completedSuccess },
-  ] = useCompleteCourseMutation();
-  const [
-    inCompleteCourse,
-    { data: markInCompleteData, isSuccess: inCompletedSuccess },
-  ] = useInCompleteCourseMutation();
-
-  useEffect(() => {
-    console.log(markCompleteData);
-
-    if (completedSuccess) {
-      refetch();
-      toast.success(markCompleteData.message);
-    }
-    else if (inCompletedSuccess) {
-      refetch();
-      toast.success(markInCompleteData.message);
-    }
-  }, [completedSuccess, inCompletedSuccess]);
+  const [completeCourse, { data: markCompleteData, isSuccess: completedSuccess }] = useCompleteCourseMutation();
+  const [inCompleteCourse, { data: markInCompleteData, isSuccess: inCompletedSuccess }] = useInCompleteCourseMutation();
 
   const [currentLecture, setCurrentLecture] = useState(null);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Failed to load course details</p>;
+  useEffect(() => {
+    if (completedSuccess || inCompletedSuccess) {
+      refetch();
+      toast.success(completedSuccess ? markCompleteData.message : markInCompleteData.message);
+    }
+  }, [completedSuccess, inCompletedSuccess]);
 
-  console.log(data);
+  if (isLoading) return <p className="text-center text-gray-400">Loading...</p>;
+  if (isError) return <p className="text-center text-red-400">Failed to load course details</p>;
 
   const { courseDetails, progress, completed } = data.data;
   const { courseTitle } = courseDetails;
+  const initialLecture = currentLecture || (courseDetails.lectures && courseDetails.lectures[0]);
 
-  // initialze the first lecture is not exist
-  const initialLecture =
-    currentLecture || (courseDetails.lectures && courseDetails.lectures[0]);
-
-  const isLectureCompleted = (lectureId) => {
-    return progress.some((prog) => prog.lectureId === lectureId && prog.viewed);
-  };
+  const isLectureCompleted = (lectureId) =>
+    progress.some((prog) => prog.lectureId === lectureId && prog.viewed);
 
   const handleLectureProgress = async (lectureId) => {
     await updateLectureProgress({ courseId, lectureId });
     refetch();
   };
-  // Handle select a specific lecture to watch
+
   const handleSelectLecture = (lecture) => {
     setCurrentLecture(lecture);
     handleLectureProgress(lecture._id);
@@ -77,84 +58,77 @@ const CourseProgress = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
-      {/* Display course name  */}
-      <div className="flex justify-between mb-4">
-        <h1 className="text-2xl font-bold">{courseTitle}</h1>
+    <div className="max-w-7xl mx-auto p-6">
+      {/* Top Heading */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{courseTitle}</h1>
         <Button
           onClick={completed ? handleInCompleteCourse : handleCompleteCourse}
           variant={completed ? "outline" : "default"}
+          className="mt-4 sm:mt-0"
         >
           {completed ? (
             <div className="flex items-center">
-              <CheckCircle className="h-4 w-4 mr-2" /> <span>Completed</span>{" "}
+              <CheckCircle className="h-5 w-5 mr-2" />
+              Completed
             </div>
           ) : (
-            "Mark as completed"
+            "Mark as Completed"
           )}
         </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Video section  */}
-        <div className="flex-1 md:w-3/5 h-fit rounded-lg shadow-lg p-4">
-          <div>
+      {/* Main Content Area */}
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Video Section */}
+        <div className="flex-1 md:w-2/3 bg-muted dark:bg-zinc-800 rounded-2xl p-5 shadow-xl">
+          <div className="overflow-hidden rounded-xl">
             <video
               src={currentLecture?.videoUrl || initialLecture.videoUrl}
               controls
-              className="w-full h-auto md:rounded-lg"
-              onPlay={() =>
-                handleLectureProgress(currentLecture?._id || initialLecture._id)
-              }
+              className="w-full h-auto rounded-xl shadow"
+              onPlay={() => handleLectureProgress(currentLecture?._id || initialLecture._id)}
             />
           </div>
-          {/* Display current watching lecture title */}
-          <div className="mt-2 ">
-            <h3 className="font-medium text-lg">
+          <div className="mt-4">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               {`Lecture ${
                 courseDetails.lectures.findIndex(
-                  (lec) =>
-                    lec._id === (currentLecture?._id || initialLecture._id)
+                  (lec) => lec._id === (currentLecture?._id || initialLecture._id)
                 ) + 1
-              } : ${
-                currentLecture?.lectureTitle || initialLecture.lectureTitle
-              }`}
+              }: ${currentLecture?.lectureTitle || initialLecture.lectureTitle}`}
             </h3>
           </div>
         </div>
-        {/* Lecture Sidebar  */}
-        <div className="flex flex-col w-full md:w-2/5 border-t md:border-t-0 md:border-l border-gray-200 md:pl-4 pt-4 md:pt-0">
-          <h2 className="font-semibold text-xl mb-4">Course Lecture</h2>
-          <div className="flex-1 overflow-y-auto">
+
+        {/* Sidebar */}
+        <div className="md:w-1/3">
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Course Lectures</h2>
+          <div className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto pr-2">
             {courseDetails?.lectures.map((lecture) => (
               <Card
                 key={lecture._id}
-                className={`mb-3 hover:cursor-pointer transition transform ${
-                  lecture._id === currentLecture?._id
-                    ? "bg-gray-200 dark:dark:bg-gray-800"
-                    : ""
-                } `}
                 onClick={() => handleSelectLecture(lecture)}
+                className={`transition-all text-wrap duration-300 cursor-pointer border-none ${
+                  lecture._id === (currentLecture?._id || initialLecture._id)
+                    ? "bg-primary text-primary-foreground dark:bg-gray-800 dark:text-white"
+                    : "bg-muted dark:bg-zinc-800 hover:bg-accent hover:text-accent-foreground"
+                }`}
               >
-                <CardContent className="flex items-center justify-between p-4">
-                  <div className="flex items-center">
+                <CardContent className="flex text-wrap w-full items-center justify-between p-4">
+                  <div className="flex gap-3 items-center">
                     {isLectureCompleted(lecture._id) ? (
-                      <CheckCircle2 size={24} className="text-green-500 mr-2" />
+                      <CheckCircle2 className="text-green-400 mr-3" size={22} />
                     ) : (
-                      <CirclePlay size={24} className="text-gray-500 mr-2" />
+                      <CirclePlay className="text-gray-400 mr-3" size={22} />
                     )}
-                    <div>
-                      <CardTitle className="text-lg font-medium">
-                        {lecture.lectureTitle}
-                      </CardTitle>
-                    </div>
+                    <CardTitle className="text-base text-wrap font-medium truncate">
+                      {lecture.lectureTitle}
+                    </CardTitle>
                   </div>
                   {isLectureCompleted(lecture._id) && (
-                    <Badge
-                      variant={"outline"}
-                      className="bg-green-200 text-green-600"
-                    >
-                      Completed
+                    <Badge variant="outline" className="bg-green-600/10 text-green-400 border-green-400/20">
+                      Done
                     </Badge>
                   )}
                 </CardContent>

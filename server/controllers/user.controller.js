@@ -5,7 +5,7 @@ import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
 export const register=async(req,res)=>{
     try {
-        const {name,email,password}=req.body
+        const {name,email,password,role}=req.body
 
         if(!name || !email || !password){
             return res.status(400).json({success:false,message:"Please fill in all fields"})
@@ -20,7 +20,7 @@ export const register=async(req,res)=>{
         }
 
         const hashedPassword=await bcrypt.hash(password,10);
-        await User.create({name,email,password:hashedPassword})
+        await User.create({name,email,password:hashedPassword,role})
 
         return res.status(201).json({success:true,message:"Account created successfully"})
     } catch (error) {

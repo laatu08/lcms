@@ -1,4 +1,3 @@
-// McgPr7oX7v1mMcbN
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,6 +24,7 @@ const Login = () => {
     name: "",
     email: "",
     password: "",
+    role: "student",
   });
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
 
@@ -64,18 +64,18 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if(registerIsSuccess && registerData){
-      toast.success(registerData.message || "Signup successful.")
+    if (registerIsSuccess && registerData) {
+      toast.success(registerData.message || "Signup successful.");
     }
-    if(registerError){
-      toast.error(registerError.data.message || "Signup Failed");
+    if (registerError) {
+      toast.error(registerError.data.message || "Signup failed.");
     }
-    if(loginIsSuccess && loginData){
+    if (loginIsSuccess && loginData) {
       toast.success(loginData.message || "Login successful.");
       navigate("/");
     }
-    if(loginError){ 
-      toast.error(loginError.data.message || "login Failed");
+    if (loginError) {
+      toast.error(loginError.data.message || "Login failed.");
     }
   }, [
     loginIsLoading,
@@ -87,22 +87,28 @@ const Login = () => {
   ]);
 
   return (
-    <div className="flex items-center w-full justify-center mt-20">
-      <Tabs defaultValue="login" className="w-[400px]">
-        <TabsList className="grid w-full grid-cols-2">
+    <div className="flex pt-10 justify-center min-h-screen bg-gray-50 dark:bg-[#141414] px-4">
+      <Tabs defaultValue="login" className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-2">Welcome</h1>
+          <p className="text-muted-foreground">
+            Login or create a new account to continue
+          </p>
+        </div>
+        <TabsList className="grid grid-cols-2 w-full rounded-lg overflow-hidden shadow-sm">
           <TabsTrigger value="signup">Signup</TabsTrigger>
           <TabsTrigger value="login">Login</TabsTrigger>
         </TabsList>
+
+        {/* Signup Tab */}
         <TabsContent value="signup">
-          <Card>
-            <CardHeader>
-              <CardTitle>Signup</CardTitle>
-              <CardDescription>
-                Create a new account and click signup when you're done.
-              </CardDescription>
+          <Card className="rounded-2xl shadow-md border dark:border-gray-800">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl">Signup</CardTitle>
+              <CardDescription>Create a new account below</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
+            <CardContent className="space-y-4">
+              <div>
                 <Label htmlFor="name">Name</Label>
                 <Input
                   type="text"
@@ -110,34 +116,48 @@ const Login = () => {
                   value={signupInput.name}
                   onChange={(e) => changeInputHandler(e, "signup")}
                   placeholder="Eg. patel"
-                  required="true"
+                  required
                 />
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="username">Email</Label>
+              <div>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
                   name="email"
                   value={signupInput.email}
                   onChange={(e) => changeInputHandler(e, "signup")}
                   placeholder="Eg. patel@gmail.com"
-                  required="true"
+                  required
                 />
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="username">Password</Label>
+              <div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   name="password"
                   value={signupInput.password}
                   onChange={(e) => changeInputHandler(e, "signup")}
-                  placeholder="Eg. xyz"
-                  required="true"
+                  placeholder="Your password"
+                  required
                 />
+              </div>
+              <div>
+                <Label htmlFor="role">Role</Label>
+                <select
+                  name="role"
+                  value={signupInput.role}
+                  onChange={(e) => changeInputHandler(e, "signup")}
+                  className="w-full border rounded-md p-2 dark:bg-[#1f1f1f]"
+                  required
+                >
+                  <option value="student">Student</option>
+                  <option value="instructor">Instructor</option>
+                </select>
               </div>
             </CardContent>
             <CardFooter>
               <Button
+                className="w-full"
                 disabled={registerIsLoading}
                 onClick={() => handleRegistration("signup")}
               >
@@ -153,40 +173,43 @@ const Login = () => {
             </CardFooter>
           </Card>
         </TabsContent>
+
+        {/* Login Tab */}
         <TabsContent value="login">
-          <Card>
-            <CardHeader>
-              <CardTitle>Login</CardTitle>
+          <Card className="rounded-2xl shadow-md border dark:border-gray-800">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl">Login</CardTitle>
               <CardDescription>
-                Login your password here. After signup, you'll be logged in.
+                Enter your credentials to access your account
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="current">Email</Label>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
                   name="email"
                   value={loginInput.email}
                   onChange={(e) => changeInputHandler(e, "login")}
                   placeholder="Eg. patel@gmail.com"
-                  required="true"
+                  required
                 />
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">Password</Label>
+              <div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   name="password"
                   value={loginInput.password}
                   onChange={(e) => changeInputHandler(e, "login")}
-                  placeholder="Eg. xyz"
-                  required="true"
+                  placeholder="Your password"
+                  required
                 />
               </div>
             </CardContent>
             <CardFooter>
               <Button
+                className="w-full"
                 disabled={loginIsLoading}
                 onClick={() => handleRegistration("login")}
               >
@@ -206,4 +229,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;

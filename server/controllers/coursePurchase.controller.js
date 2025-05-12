@@ -189,3 +189,30 @@ export const getAllPurchasedCourse = async (_, res) => {
         console.log(error);
     }
 };
+
+
+// Get all purchased courses related to the logged-in instructor
+export const getInstructorPurchasedCourses = async (req, res) => {
+    try {
+        const instructorId = req.id;  // Assuming req.id contains the logged-in instructor's userId
+
+        // Step 1: Find all courses created by this instructor
+        const instructorCourses = await Course.find({ creator: instructorId }).select('_id');
+
+        const courseIds = instructorCourses.map(course => course._id);
+
+        // Step 2: Find all purchases where courseId is one of instructor's courses
+        const purchasedCourse = await CoursePurchase.find({
+            status: "completed",
+            courseId: { $in: courseIds }
+        }).populate("courseId");
+
+        return res.status(200).json({
+            purchasedCourse
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Failed to fetch instructor purchases" });
+    }
+}
