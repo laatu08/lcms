@@ -53,7 +53,7 @@ const Navbar = () => {
               <GraduationCap className="h-5 w-5 text-white" />
             </div>
             <h1 className="hidden md:block text-2xl font-extrabold bg-gradient-to-tr from-green-500 to-blue-500 bg-clip-text text-transparent">
-            BrightMind 
+              BrightMind
             </h1>
           </Link>
         </div>
@@ -125,7 +125,9 @@ const Navbar = () => {
 
       {/* Mobile device */}
       <div className="flex md:hidden items-center justify-between px-4 h-full">
-        <h1 className="font-extrabold text-2xl text-primary-600">E-learning</h1>
+        <h1 className="font-extrabold text-2xl text-primary-600">
+          BrightMind
+        </h1>
         <MobileNavbar user={user} logoutHandler={logoutHandler} />
       </div>
     </div>
@@ -152,7 +154,12 @@ const MobileNavbar = ({ user, logoutHandler }) => {
         <SheetHeader className="flex flex-row items-center justify-between mt-2">
           <SheetTitle>
             <Link to="/" className="text-primary-600 font-bold text-lg">
-              E-Learning
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-green-500 to-blue-600 shadow-md">
+                <GraduationCap className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="hidden md:block text-2xl font-extrabold bg-gradient-to-tr from-green-500 to-blue-500 bg-clip-text text-transparent">
+                BrightMind
+              </h1>
             </Link>
           </SheetTitle>
           <DarkMode />
@@ -178,7 +185,7 @@ const MobileNavbar = ({ user, logoutHandler }) => {
               <Button
                 type="submit"
                 onClick={() => navigate("/admin/dashboard")}
-                className="bg-primary-600 hover:bg-primary-700 text-white"
+                className="bg-primary-600 hover:bg-primary-700 text-black dark:text-white"
               >
                 Dashboard
               </Button>

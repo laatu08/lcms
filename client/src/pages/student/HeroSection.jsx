@@ -29,14 +29,14 @@ const HeroSection = () => {
 
           <form
             onSubmit={searchHandler}
-            className="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800 rounded-full shadow-lg overflow-hidden max-w-xl mx-auto md:mx-0 space-y-3 sm:space-y-0 sm:space-x-3 p-2 mt-4"
+            className="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800  shadow-lg overflow-hidden max-w-xl mx-auto md:mx-0 space-y-3 sm:space-y-0 sm:space-x-3 p-2 mt-4"
           >
             <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Courses"
-              className="flex-grow border-none focus-visible:ring-0 px-6 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent"
+              className="flex-grow border-gray-500 rounded-3xl focus-visible:ring-0 px-6 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent"
             />
             <Button
               type="submit"
