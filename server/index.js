@@ -31,6 +31,9 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept',
+        'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
     credentials: true
 }));
 const PORT = process.env.PORT || 3000
