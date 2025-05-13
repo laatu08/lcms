@@ -6,6 +6,7 @@ export const generateToken = (res, user, message) => {
     return res.status(200).cookie("token",token,{
         httpOnly:true,
         // sameSite:"strict",
+        secure:true,
         sameSite:"none", // for deployment
         maxAge:24*60*60*1000,
     }).json({success:true,message,user})
