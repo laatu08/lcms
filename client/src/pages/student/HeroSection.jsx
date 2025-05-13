@@ -29,7 +29,7 @@ const HeroSection = () => {
 
           <form
             onSubmit={searchHandler}
-            className="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800  shadow-lg overflow-hidden max-w-xl mx-auto md:mx-0 space-y-3 sm:space-y-0 sm:space-x-3 p-2 mt-4"
+            className="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800  shadow-lg overflow-hidden rounded-full max-w-xl mx-auto md:mx-0 space-y-3 sm:space-y-0 sm:space-x-3 p-2 mt-4"
           >
             <Input
               type="text"
