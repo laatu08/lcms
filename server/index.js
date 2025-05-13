@@ -13,13 +13,14 @@ import courseProgressRoute from "./routes/courseProgress.route.js"
 
 dotenv.config({})
 
+
+const app = express()
+
 // for production
 app.set("trust proxy", 1); // trust first proxy
 
 // db
 connectDB()
-
-const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
