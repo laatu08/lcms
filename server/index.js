@@ -13,27 +13,34 @@ import courseProgressRoute from "./routes/courseProgress.route.js"
 
 dotenv.config({})
 
+// for production
+app.set("trust proxy", 1); // trust first proxy
+
 // db
 connectDB()
 
-const app=express()
+const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://lcms-1.onrender.com"
+];
+
 app.use(cors({
-    origin:"https://lcms-1.onrender.com",
-    credentials:true
-}))
+    origin: allowedOrigins,
+    credentials: true
+}));
+const PORT = process.env.PORT || 3000
 
-const PORT=process.env.PORT || 3000
-
-app.use("/api/v1/media",mediaRoute)
-app.use("/api/v1/user",userRoutes)
-app.use("/api/v1/course",courseRoutes)
-app.use("/api/v1/purchase",purchaseRoute)
-app.use("/api/v1/progress",courseProgressRoute)
+app.use("/api/v1/media", mediaRoute)
+app.use("/api/v1/user", userRoutes)
+app.use("/api/v1/course", courseRoutes)
+app.use("/api/v1/purchase", purchaseRoute)
+app.use("/api/v1/progress", courseProgressRoute)
 
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })
